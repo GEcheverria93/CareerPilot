@@ -1,0 +1,17 @@
+{
+  "name": "careerpilot",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:api": "pnpm --dir ./apps/api dev",
+    "dev:www": "pnpm --dir ./apps/www dev",
+    "build:api": "pnpm --dir ./apps/api build",
+    "build:www": "pnpm --dir ./apps/www build"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4"
+  }
+}

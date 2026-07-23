@@ -1,0 +1,8 @@
+node_modules
+dist
+.env
+.DS_Store
+coverage
+pnpm-lock.yaml
+**/dist
+**/.DS_Store
