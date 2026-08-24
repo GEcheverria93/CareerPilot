@@ -10,6 +10,88 @@ La implementación actual sigue las decisiones técnicas principales del proyect
 - Validación futura: Zod
 - Gestión de paquetes: npm en este entorno local (el proyecto usa `pnpm` como decisión técnica establecida)
 
+## Historial de cambios
+
+### 2026-08-24 — Instrucciones dev y cambios recientes
+
+He mantenido el contenido anterior intacto. Debajo tienes instrucciones adicionales, comandos reproducibles para Windows y un breve changelog con las correcciones aplicadas el 2026-08-24.
+
+**Resumen de cambios**
+- Se centralizaron las heurísticas en `apps/api/src/lib/heuristics.ts`.
+- Los endpoints `POST /profile/from-cv/:cvId` y `GET /profile/:cvId` ahora devuelven un objeto `extracted` con: `fullName`, `email`, `phone`, `summary`, `skills`, `positions`, `experienceYears`, `education`, `languages`, `confidence`.
+- Se añadieron tests de Vitest para heurísticas: `apps/api/src/__tests__/heuristics.spec.ts`.
+- UI: `apps/www/src/components/UploadCV.tsx` ahora consume `extracted` y muestra `fullName`, `email`, `phone`, `languages` y `confidence`.
+- Se eliminaron archivos `.js` duplicados en `apps/www/src` que causaban errores de JSX (`App.js`, `main.js`, `components/UploadCV.js`).
+
+**Prerrequisitos**
+- Node >= 18
+- npm (o `pnpm` si sigues la decisión técnica)
+
+**Instalación (rápida)**
+
+Backend
+```bash
+cd apps/api
+npm install
+```
+
+Frontend
+```bash
+cd apps/www
+npm install
+```
+
+**Inicializar DB (backend)**
+```bash
+cd apps/api
+npx prisma generate
+npx prisma db push
+# dev DB: apps/api/prisma/dev.db
+```
+
+**Ejecutar en desarrollo (Windows)**
+
+PowerShell (backend, con watcher):
+```powershell
+cd apps/api
+$env:PORT=4001; npx ts-node-dev --respawn --transpile-only src/index.ts
+```
+
+CMD (backend, compilado):
+```cmd
+cd apps/api
+npx tsc -p tsconfig.json
+set PORT=4001 && node dist/index.js
+```
+
+Frontend (Vite):
+```bash
+cd apps/www
+npm run dev
+# Abre http://localhost:5173 (o el puerto que Vite asigne)
+```
+
+**Ejecutar tests (backend)**
+```bash
+cd apps/api
+npm run test
+```
+
+**Troubleshooting (problemas ja vistos)**
+- Puerto ocupado (ejemplo para 4001):
+```bash
+npx kill-port 4001
+```
+- Error de JSX por archivos `.js` duplicados en el frontend: elimina las versiones `.js` que coexistan con `.tsx` en `apps/www/src` (ya aplicado en este repo).
+- Si Vite/Esbuild indica que el loader no tiene JSX, asegura que `apps/www/tsconfig.json` contiene `jsx: "react-jsx"` y que no existan archivos `.js` con JSX sin el loader correcto.
+
+**Archivos relevantes (cambios principales)**
+- `apps/api/src/lib/heuristics.ts`
+- `apps/api/src/routes/profile.ts` (POST `/from-cv/:cvId`, GET `/profile/:cvId`)
+- `apps/api/src/__tests__/heuristics.spec.ts`
+- `apps/www/src/components/UploadCV.tsx`
+
+
 ## Requisitos
 
 - Node.js 18 o superior
@@ -105,3 +187,6 @@ npm run dev
 
 - La base de datos actual es SQLite y está en `apps/api/prisma/dev.db`.
 - El primer flujo funcional ya está implementado: archivo físico en `apps/api/uploads` + registro en la tabla `CV`.
+---
+
+Si quieres, puedo: 1) añadir esta sección al comienzo del README como un encabezado de historial en vez de al final, 2) generar un `CHANGELOG.md` separado con más detalle, o 3) commitear estos cambios y crear un breve mensaje de commit. ¿Cuál prefieres?
